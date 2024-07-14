@@ -196,6 +196,22 @@ public:
                 }
             }
         }
+        if (solicitud.getTipo() == "DEVOLVER")
+        {
+            for (Cmaterial i : solicitud.getMaterialessolicitados())
+            {
+                for (Cmaterial j : materialesgeneral)
+                {
+                    if (i.getId() == j.getId())
+                    {
+                        // Reducimos la cantidad
+                        j.setCantidad(j.getCantidad() + i.getCantidad());
+                    }
+                }
+            }
+        }
+        
+        
         // Recorremos nuestro vector de materiales de la solicitud
 
         solicitudesgeneral.push_back(solicitud);
@@ -323,6 +339,21 @@ public:
                 std::cout << "Cantidad:" << i.getCantidad() << endl;
                 std::cout << endl;
             }
+        }
+    }
+
+    void listaDeSolicitudesFull()
+    {
+        std::cout<<"Lista de Solicitudes del Laboratorio:"<<std::endl;
+        int count = 0;
+        for (auto &&i : solicitudesgeneral)
+        {
+            std::cout<<"-- Solicitud Numero "<<count+1<<" --"<<endl;
+            std::cout<<"Codigo:"<<i.getCodigo()<<endl;
+            std::cout<<"DNI:"<<i.getDnIinvestigador()<<endl;
+            std::cout<<"Tipo:"<<i.getTipo()<<endl;
+            std::cout<<endl;
+            count++;
         }
     }
 };

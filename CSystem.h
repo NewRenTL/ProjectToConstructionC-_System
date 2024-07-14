@@ -15,8 +15,9 @@ private:
         std::cout << "(1) Crear Material" << endl;
         std::cout << "(2) Crear Investigador" << endl;
         std::cout << "(3) Ingresar (Investigador)" << endl;
-        std::cout << "(4) Listar Materiales"<<endl;
-        std::cout << "(5) Salir" << endl;
+        std::cout << "(4) Listar Materiales" << endl;
+        std::cout << "(5) Listar Solicitudes" << endl;
+        std::cout << "(6) Salir" << endl;
         int x = -1;
         std::cout << "Ingrese la opcion:";
         std::cin >> x;
@@ -138,9 +139,13 @@ private:
             {
                 string cateogoryMaterialX;
                 std::cout << "Ingrese la categoria del material:";
-                std::cin >>cateogoryMaterialX;
+                std::cin >> cateogoryMaterialX;
                 clab->busquedaByName(cateogoryMaterialX);
             }
+        }
+        else if (optionX == 4)
+        {
+            crearSolicitudDeDevolverMaterial(dni_param);
         }
     }
 
@@ -167,11 +172,13 @@ private:
         std::cout << "(1) Crear Solicitud de Materiales" << endl;
         std::cout << "(2) Ver Lista de materiales" << endl;
         std::cout << "(3) Busquedas de Materiales" << endl;
+        std::cout << "(4) Crear Devolución de Materiales" << endl;
         do
+
         {
             std::cout << "Enter your option:";
             std::cin >> option;
-        } while (option < 1 | option > 3);
+        } while (option < 1 | option > 4);
 
         return option;
     };
@@ -243,6 +250,44 @@ private:
         // Listo se agregaron las 2 solicitudes
     }
 
+    void crearSolicitudDeDevolverMaterial(string dni)
+    {
+        vector<Cmaterial> materialesDevolver;
+        string materialName = "";
+        string codeMaterial = "";
+        int cantMaterial = -1;
+        string tipo = "DEVOLVER";
+        std::cout << "Que material quieres devolver?" << std::endl;
+        do
+        {
+            std::cout << "Nombre del material:";
+            std::cin >> materialName;
+            std::cout << "Codigo del material:";
+            std::cin >> codeMaterial;
+        } while (clab->existMaterialCodeName(codeMaterial, materialName) == false);
+
+        Cmaterial materialparaDevolver;
+
+        std::cout << "Cuanto de material va a devolver?:";
+        std::cin >> cantMaterial;
+
+        materialparaDevolver.setCantidad(cantMaterial);
+
+        clab->updateByCodigoAndNameMaterial(codeMaterial, materialName, materialparaDevolver);
+
+        materialesDevolver.push_back(materialparaDevolver);
+
+        Csolicitud newSoli(dni, materialesDevolver, tipo);
+
+        std::cout << "Material ha sido devuelto con exito";
+
+        clab->agregarSolicitudAInvestigator(newSoli, dni);
+
+        clab->agregar(newSoli);
+
+        std::cout << "Material ha sido devuelto ..." << std::endl;
+    }
+
     bool activate = false;
 
 public:
@@ -258,11 +303,11 @@ public:
         {
             int option = menuPrincipal();
 
-            if (option < 1 | option > 5)
+            if (option < 1 | option > 6)
             {
                 std::cout << "You entered an incorrect option.. Please try it again" << std::endl;
             }
-            else if (option == 5)
+            else if (option == 6)
             {
                 activate = false;
                 std::cout << "Exit..";
@@ -281,6 +326,8 @@ public:
                     ingresarResearcher();
                 case 4:
                     clab->listaMateriales();
+                case 5:
+                    clab->listaDeSolicitudesFull();
                 default:
                     break;
                 }

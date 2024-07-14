@@ -13,7 +13,8 @@ using namespace std;
 enum tipos
 {
     TRAER,
-    PEDIR
+    PEDIR,
+    DEVOLVER
 };
 
 class Csolicitud
