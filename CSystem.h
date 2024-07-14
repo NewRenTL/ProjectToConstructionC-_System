@@ -70,28 +70,29 @@ private:
                 std::cin.ignore();
                 std::string nameMaterial, category;
                 std::cout << "Enter your material name:";
-                getline(cin,nameMaterial);
+                getline(cin, nameMaterial);
                 std::cout << "Enter your category name:";
                 getline(cin, paramName);
                 int cantMaterial;
                 std::cout << "How many material do you have?:";
-                std::cin>>cantMaterial;
+                std::cin >> cantMaterial;
                 std::cin.ignore();
-                Cmaterial c2(nameMaterial,category);
+                Cmaterial c2(nameMaterial, category);
                 c2.setCantidad(cantMaterial);
                 listMaterial.push_back(c2);
                 clab->agregar(c2);
-                
+
                 char validator = 'n';
-                std::cout<<"Do you want to add more material? (Y/n):";
-                std::cin>>validator;
+                std::cout << "Do you want to add more material? (Y/n):";
+                std::cin >> validator;
                 std::cin.ignore();
-                if(validator == 'n')
+                if (validator == 'n')
                 {
                     break;
                 }
             }
-            Csolicitud newSoli(paramDNI,listMaterial,"TRAER");
+            // Creación de solicitud con todo los datos necesarios
+            Csolicitud newSoli(paramDNI, listMaterial, "TRAER");
             c1.agregar(newSoli);
             clab->agregar(newSoli);
         }
@@ -108,10 +109,69 @@ private:
         // Si lo encuentro te muestra este menu, si no , te va a pedir que crees el investigador
         // DNI - Nombre del investigador
 
+        int option = -1;
         std::cout << "(1) Crear Solicitud de Materiales" << endl;
-        std::cout << "(3) Salir" << endl;
-        return -1;
+        std::cout << "(2) Ver Lista de materiales" << endl;
+        do
+        {
+            std::cout << "Enter your option:";
+            std::cin >> option;
+        } while (option < 1 | option > 2);
+
+        return option;
     };
+
+    void crearSolicitudMaterialesMenu(string dniResearcher)
+    {
+        string tipo = "PEDIR";
+        vector<Cmaterial> solicitadosMateriales;
+        std::cout << "Lista de materiales de solicitud:" << endl;
+        int num = 0;
+        while (true)
+        {
+            cout << "Material Numero " << num + 1 << " :" << endl;
+            string nameMatSoli = "";
+            string codeSoliMat = "";
+            std::cin.ignore();
+            std::cout << "Nombre de Material:";
+            getline(cin, nameMatSoli);
+            std::cout << "Codigo:";
+            getline(cin, codeSoliMat);
+
+            if (!clab->existMaterialCodeName(codeSoliMat, nameMatSoli))
+            {
+                std::cout << "El material que ingresaste no existe";
+            }
+            else
+            {
+                int cantidad;
+                do
+                {
+                    std::cout << "Cuanta cantidad necesitas?:";
+                    cin >> cantidad;
+                } while (clab->existEnoughAmount(codeSoliMat, nameMatSoli, cantidad) == false);
+
+                Cmaterial materialSolicitado;
+                materialSolicitado.setCantidad(cantidad);
+
+                clab->updateByCodigoAndNameMaterial(codeSoliMat,nameMatSoli,materialSolicitado);
+                
+                //Ya esta listo nuestro material para guardar
+                solicitadosMateriales.push_back(materialSolicitado);
+
+                char validator = 'n';
+                std::cout << "Do you want to add more material? (Y/n):";
+                std::cin >> validator;
+                std::cin.ignore();
+                if (validator == 'n')
+                {
+                    break;
+                }
+                
+                num++;
+            }
+        }
+    }
 
     bool activate = false;
 

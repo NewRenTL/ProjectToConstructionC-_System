@@ -25,7 +25,7 @@ private:
 
     bool materialExists(Cmaterial param)
     {
-      
+
         for (int i = 0; i < materialesgeneral.size(); i++)
         {
             if (materialesgeneral[i].getNombre() == param.getNombre())
@@ -38,7 +38,7 @@ private:
     };
 
     bool ResearcherExists(Cinvestigador param)
-    {   
+    {
 
         for (int i = 0; i < investigadoresgeneral.size(); i++)
         {
@@ -132,7 +132,7 @@ public:
         investigadoresgeneral.push_back(investigador);
     };
 
-    void agregar(Cmaterial material)
+    void agregar(Cmaterial &material)
     {
         // I need to add a function that check if the material was pushed before
 
@@ -141,15 +141,16 @@ public:
             materialesgeneral.push_back(material);
             return;
         }
-        
-        //It's possible improve its funcitionality
 
-        //It's only should be activate when you bring material to our laboratory
-        
+        // It's possible improve its funcitionality
+
+        // It's only should be activate when you bring material to our laboratory
+
         for (int i = 0; i < materialesgeneral.size(); i++)
         {
-            if(materialesgeneral[i].getNombre() == material.getNombre())
+            if (materialesgeneral[i].getNombre() == material.getNombre())
             {
+                material.setId(materialesgeneral[i].getId());
                 materialesgeneral[i].setCantidad(materialesgeneral[i].getCantidad() + material.getCantidad());
             }
         }
@@ -165,6 +166,52 @@ public:
     bool existsMaterialPublic(Cmaterial param)
     {
         return materialExists(param);
+    }
+
+    bool existMaterialCodeName(string code, string name)
+    {
+        for (auto &&i : materialesgeneral)
+        {
+            if (i.getId() == code | i.getNombre() == name)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool existEnoughAmount(string code, string name, int cant)
+    {
+        for (auto &&i : materialesgeneral)
+        {
+            if ((i.getId() == code | i.getNombre() == name) && i.getCantidad() >= cant)
+            {
+                std::cout << "Hay suficiente" << endl;
+                return true;
+            }
+            else
+            {
+                std::cout << "No hay suficiente.. Pruebe de nuevo" << endl;
+                std::cout << "Cantidad Actual:" << i.getCantidad() << endl;
+                return false;
+            }
+        }
+        return false;
+    }
+
+    void updateByCodigoAndNameMaterial(string code,string name,Cmaterial &x)
+    {
+        for (auto &&i : materialesgeneral)
+        {
+            if(i.getId() == code || i.getNombre() == name )
+            {
+                x.setCategoria(i.getCategoria());
+                x.setNombre(i.getNombre());
+                x.setId(i.getId());
+            }
+        }
+        
     }
 };
 
