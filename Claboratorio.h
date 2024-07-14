@@ -284,6 +284,7 @@ public:
     }
     void listaMateriales()
     {
+        std::cout<<"Lista de Materiales:"<<endl;
         for (auto &&i : materialesgeneral)
         {
             std::cout << endl;

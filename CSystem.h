@@ -15,7 +15,8 @@ private:
         std::cout << "(1) Crear Material" << endl;
         std::cout << "(2) Crear Investigador" << endl;
         std::cout << "(3) Ingresar (Investigador)" << endl;
-        std::cout << "(4) Salir" << endl;
+        std::cout << "(4) Listar Materiales"<<endl;
+        std::cout << "(5) Salir" << endl;
         int x = -1;
         std::cout << "Ingrese la opcion:";
         std::cin >> x;
@@ -257,11 +258,11 @@ public:
         {
             int option = menuPrincipal();
 
-            if (option < 1 | option > 3)
+            if (option < 1 | option > 5)
             {
                 std::cout << "You entered an incorrect option.. Please try it again" << std::endl;
             }
-            else if (option == 4)
+            else if (option == 5)
             {
                 activate = false;
                 std::cout << "Exit..";
@@ -278,6 +279,8 @@ public:
                     break;
                 case 3:
                     ingresarResearcher();
+                case 4:
+                    clab->listaMateriales();
                 default:
                     break;
                 }
