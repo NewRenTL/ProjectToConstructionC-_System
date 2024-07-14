@@ -103,6 +103,59 @@ private:
         return 1;
     };
 
+    void ingresarResearcher()
+    {
+        string dni_param = "";
+        do
+        {
+            std::cout << "Ingrese el DNI del Investigador:";
+            std::cin >> dni_param;
+        } while (clab->existReasearcherByDni(dni_param) == false);
+
+        int optionX = menuResearcher();
+
+        if (optionX == 1)
+        {
+            crearSolicitudMaterialesMenu(dni_param);
+        }
+        else if (optionX == 2)
+        {
+            clab->listaMateriales();
+        }
+        else if (optionX == 3)
+        {
+            int optionX2 = menuBusquedas();
+
+            if (optionX2 == 1)
+            {
+                string nameMaterialX;
+                std::cout << "Ingrese el nombre del material:";
+                std::cin >> nameMaterialX;
+                clab->busquedaByName(nameMaterialX);
+            }
+            else
+            {
+                string cateogoryMaterialX;
+                std::cout << "Ingrese la categoria del material:";
+                std::cin >>cateogoryMaterialX;
+                clab->busquedaByName(cateogoryMaterialX);
+            }
+        }
+    }
+
+    int menuBusquedas()
+    {
+        int option = -1;
+        do
+        {
+            std::cout << "(1) Busqueda por Nombre" << endl;
+            std::cout << "(2) Busqueda por Categoria" << endl;
+            std::cin >> option;
+        } while (option > 2 || option < 1);
+
+        return option;
+    }
+
     int menuResearcher()
     {
         // DNI , -> Busque en el vector de investigadores de laboratorio
@@ -112,16 +165,17 @@ private:
         int option = -1;
         std::cout << "(1) Crear Solicitud de Materiales" << endl;
         std::cout << "(2) Ver Lista de materiales" << endl;
+        std::cout << "(3) Busquedas de Materiales" << endl;
         do
         {
             std::cout << "Enter your option:";
             std::cin >> option;
-        } while (option < 1 | option > 2);
+        } while (option < 1 | option > 3);
 
         return option;
     };
 
-    void crearSolicitudMaterialesMenu(string dniResearcher)
+    void crearSolicitudMaterialesMenu(string dni)
     {
         string tipo = "PEDIR";
         vector<Cmaterial> solicitadosMateriales;
@@ -129,6 +183,7 @@ private:
         int num = 0;
         while (true)
         {
+            cout << endl;
             cout << "Material Numero " << num + 1 << " :" << endl;
             string nameMatSoli = "";
             string codeSoliMat = "";
@@ -154,9 +209,9 @@ private:
                 Cmaterial materialSolicitado;
                 materialSolicitado.setCantidad(cantidad);
 
-                clab->updateByCodigoAndNameMaterial(codeSoliMat,nameMatSoli,materialSolicitado);
-                
-                //Ya esta listo nuestro material para guardar
+                clab->updateByCodigoAndNameMaterial(codeSoliMat, nameMatSoli, materialSolicitado);
+
+                // Ya esta listo nuestro material para guardar
                 solicitadosMateriales.push_back(materialSolicitado);
 
                 char validator = 'n';
@@ -167,10 +222,24 @@ private:
                 {
                     break;
                 }
-                
+
                 num++;
             }
         }
+
+        // Tenemos lista nuestra solicitud
+        Csolicitud newSoli(dni, solicitadosMateriales, tipo);
+
+        // Ahora la añadimos a la solicitudes del investigador
+
+        clab->agregarSolicitudAInvestigator(newSoli, dni);
+
+        // Ahora ya esta registrada en el investigator
+        // Ahora registraremos en el laboratorio
+        // pero ahora si la función agregar de laboratorio
+        // hara el trabajo de retirar material de laboratorio(simulation)
+        clab->agregar(newSoli);
+        // Listo se agregaron las 2 solicitudes
     }
 
     bool activate = false;
@@ -207,6 +276,8 @@ public:
                 case 2:
                     creationResearcher();
                     break;
+                case 3:
+                    ingresarResearcher();
                 default:
                     break;
                 }

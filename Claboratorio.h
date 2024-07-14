@@ -51,6 +51,19 @@ private:
         return false;
     }
 
+    bool ResearcherExists(string dni_param)
+    {
+        for (auto &&i : investigadoresgeneral)
+        {
+            if (i.getDni() == dni_param)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 public:
     Claboratorio(){
 
@@ -138,6 +151,7 @@ public:
 
         if (materialExists(material) == false)
         {
+            // Si no lo encuentra lo colocamos de frente
             materialesgeneral.push_back(material);
             return;
         }
@@ -146,6 +160,14 @@ public:
 
         // It's only should be activate when you bring material to our laboratory
 
+        // Casi contrario
+        // SABIENDO QUE EXISTA, NOS QUEDARIA ACTUALIZAR SU ID, PARA QUE NO SEAN EL MISMO MATERIAL
+        //  CON IDS DISTINTOS
+        //  Y TAMBIEN A NUESTRO VECTOR DE MATERIALES DE LABORATORIO LE AUMENTAMOS LA CANTIDAD QUE TRAE
+        //  EL INVESTIGADOR
+
+        // A NUESTRO MATERIAL QUE TRAE EL INVESTIGADOR NO LE AUMENTAMOS LA CANTIDAD
+        // PORQUE ES SOLO QUEDARA COMO UN REGISTRO EN UNA SOLICITUD
         for (int i = 0; i < materialesgeneral.size(); i++)
         {
             if (materialesgeneral[i].getNombre() == material.getNombre())
@@ -160,12 +182,33 @@ public:
 
     void agregar(Csolicitud solicitud)
     {
+        if (solicitud.getTipo() == "PEDIR")
+        {
+            for (Cmaterial i : solicitud.getMaterialessolicitados())
+            {
+                for (Cmaterial j : materialesgeneral)
+                {
+                    if (i.getId() == j.getId())
+                    {
+                        // Reducimos la cantidad
+                        j.setCantidad(j.getCantidad() - i.getCantidad());
+                    }
+                }
+            }
+        }
+        // Recorremos nuestro vector de materiales de la solicitud
+
         solicitudesgeneral.push_back(solicitud);
     };
 
     bool existsMaterialPublic(Cmaterial param)
     {
         return materialExists(param);
+    }
+
+    bool existReasearcherByDni(string dni_param)
+    {
+        return ResearcherExists(dni_param);
     }
 
     bool existMaterialCodeName(string code, string name)
@@ -200,18 +243,86 @@ public:
         return false;
     }
 
-    void updateByCodigoAndNameMaterial(string code,string name,Cmaterial &x)
+    Cinvestigador searchReturnInvestigator(string dni)
+    {
+        for (auto &&i : investigadoresgeneral)
+        {
+            if (i.getDni() == dni)
+            {
+                return i;
+            }
+        }
+    }
+
+    void updateByCodigoAndNameMaterial(string code, string name, Cmaterial &x)
     {
         for (auto &&i : materialesgeneral)
         {
-            if(i.getId() == code || i.getNombre() == name )
+            if (i.getId() == code || i.getNombre() == name)
             {
                 x.setCategoria(i.getCategoria());
                 x.setNombre(i.getNombre());
                 x.setId(i.getId());
             }
         }
-        
+    }
+
+    void busquedaByCategory(string nameCategory)
+    {
+        for (auto &&i : materialesgeneral)
+        {
+            if (i.getCategoria() == nameCategory)
+            {
+                std::cout << endl;
+                std::cout << "ID:" << i.getId() << endl;
+                std::cout << "Material Name:" << i.getNombre() << endl;
+                std::cout << "Category Name:" << i.getCategoria() << endl;
+                std::cout << "Cantidad:" << i.getCantidad() << endl;
+                std::cout << endl;
+            }
+        }
+    }
+    void listaMateriales()
+    {
+        for (auto &&i : materialesgeneral)
+        {
+            std::cout << endl;
+            std::cout << "ID:" << i.getId() << endl;
+            std::cout << "Material Name:" << i.getNombre() << endl;
+            std::cout << "Category Name:" << i.getCategoria() << endl;
+            std::cout << "Cantidad:" << i.getCantidad() << endl;
+            std::cout << endl;
+        }
+    }
+
+    void agregarSolicitudAInvestigator(Csolicitud x, string dni)
+    {
+        for (auto &&i : investigadoresgeneral)
+        {
+            if (i.getDni() == dni)
+            {
+                i.agregar(x);
+                return;
+            }
+        }
+        return;
+    }
+
+    void busquedaByName(string nameMaterial)
+    {
+        std::cout<<"Lista Materiales:"<<endl;
+        for (auto &&i : materialesgeneral)
+        {
+            if (i.getNombre() == nameMaterial)
+            {
+                std::cout << endl;
+                std::cout << "ID:" << i.getId() << endl;
+                std::cout << "Material Name:" << i.getNombre() << endl;
+                std::cout << "Category Name:" << i.getCategoria() << endl;
+                std::cout << "Cantidad:" << i.getCantidad() << endl;
+                std::cout << endl;
+            }
+        }
     }
 };
 
